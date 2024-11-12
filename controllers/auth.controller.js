@@ -38,7 +38,6 @@ export const signup = async (req, res, next) => {
 
 export const signin = async (req, res, next) => {
   const { email, password } = req.body;
-
   if (email === "" || password === "" || !email || !password) {
     return next(errorHandler(400, "all fields are required"));
   }
@@ -55,14 +54,14 @@ export const signin = async (req, res, next) => {
       return next(errorHandler("400", "Invalid Password"));
     }
 
-    const { password: pass, ...rest } = validUser._doc;
+    const { password, ...rest } = validUser._doc;
 
     const token = jwt.sign(
       {
         id: validUser._id,
         isAdmin: validUser.isAdmin,
       },
-      process.env.JWT_SECRET
+      process.env.JWT_SECRET,
     );
 
     res
@@ -85,9 +84,9 @@ export const googleAuth = async (req, res, next) => {
     if (user) {
       const token = jwt.sign(
         { id: user._id, isAdmin: user.isAdmin },
-        process.env.JWT_SECRET
+        process.env.JWT_SECRET,
       );
-      const { password, ...rest } = user._doc;
+      const { ...rest } = user._doc;
       res
         .status(200)
         .cookie("access_token", token, {
@@ -110,9 +109,9 @@ export const googleAuth = async (req, res, next) => {
       await newUser.save();
       const token = jwt.sign(
         { id: newUser._id, isAdmin: newUser.isAdmin },
-        process.env.JWT_SECRET
+        process.env.JWT_SECRET,
       );
-      const { password, ...rest } = newUser._doc;
+      const { ...rest } = newUser._doc;
       res
         .status(200)
         .cookie("access_token", token, {
